@@ -11,6 +11,20 @@ const ColorList = ({ colors, updateColors }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [values, setValues] = useState(initialColor)
+
+  const handleChanges = (event) => {
+    
+    setValues({...values,[event.target.name] : event.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axiosWithAuth()
+    .post('/api/colors', values)
+    .then(res=>{
+      updateColors(res.data)
+    })
+  }
 
   const editColor = color => {
     setEditing(true);
@@ -101,8 +115,23 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
+      {/* <div className="spacer" /> */}
       {/* stretch - build another form here to add a color */}
+      <form onSubmit={handleSubmit}>
+        <legend>add color</legend>
+        <label>
+          color name:
+        <input type="text" name="color" value={values.color} onChange={handleChanges} />
+        </label>
+        <label>
+          hex code:
+        <input type="text" name="code" value={values.code.hex} onChange={handleChanges} />
+        </label>
+        <div className="button-row">
+          <button>add</button>
+        </div>
+      </form>
+
     </div>
   );
 };
